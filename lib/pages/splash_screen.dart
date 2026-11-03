@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
 
 // documentacion : https://stackoverflow.com/questions/43879103/adding-a-splash-screen-to-flutter-apps
 
@@ -27,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
     ]);
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 
