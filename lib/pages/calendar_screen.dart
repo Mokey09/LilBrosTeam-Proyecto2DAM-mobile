@@ -90,6 +90,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: Column(
         children: [
           TableCalendar<Event>(
+            // Esto permite que los siguientes textos esten en castellano
+            availableCalendarFormats: const {
+              CalendarFormat.month: 'Mes',
+              CalendarFormat.twoWeeks: '2 semanas',
+              CalendarFormat.week: 'Semana',
+            },
+            // Los textos generales estaran en castellano
             locale: 'es_ES',
             firstDay: kFirstDay,
             lastDay: kLastDay,
@@ -103,6 +110,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: const CalendarStyle(
               outsideDaysVisible: false,
+                // Color de las bolitas
+                markerDecoration: BoxDecoration(
+                color: Colors.amber,
+                shape: BoxShape.circle,
+              ),
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
@@ -115,6 +127,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
+            },
+            // TODO aqui se podria extraer un metodo y anadir el rango de dias cuando lo tengamos,
+            // de momento son solos los findes para probar
+            enabledDayPredicate: (day) {
+              return day.weekday != DateTime.saturday && day.weekday != DateTime.sunday;
             },
           ),
           const SizedBox(height: 8.0),
