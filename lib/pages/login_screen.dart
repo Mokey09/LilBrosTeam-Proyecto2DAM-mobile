@@ -7,14 +7,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _obscureText = true;
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(Icons.account_circle, size: 150, color: const Color.fromARGB(221, 26, 26, 26),),
             const Text(
               "Iniciar sesión",
               style: TextStyle(
@@ -22,12 +21,24 @@ class LoginScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 24),
             const TextField(
-              decoration: InputDecoration(labelText: 'Código'),
+              maxLength: 20,
+              cursorColor: Colors.indigoAccent,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.numbers),
+                labelText: 'Código',
+                floatingLabelStyle: TextStyle(
+                  color: Colors.indigoAccent,
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.indigoAccent),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             const PasswordField(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigoAccent,
@@ -39,7 +50,8 @@ class LoginScreen extends StatelessWidget {
               },
               child: const Text('Entrar', style: TextStyle(
                 color: Colors.white,
-              ),),
+                fontWeight: FontWeight.bold,
+              )),
             ),
           ],
         ),
