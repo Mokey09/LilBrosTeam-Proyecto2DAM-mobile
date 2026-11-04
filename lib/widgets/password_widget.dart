@@ -17,8 +17,16 @@ class _PasswordFieldState extends State<PasswordField> {
   Widget build(BuildContext context) {
     return TextField(
       obscureText: _obscureText,
+      cursorColor: Colors.indigoAccent,
       decoration: InputDecoration(
+        prefixIcon: Icon(Icons.lock),
         labelText: 'Contraseña', 
+        floatingLabelStyle: TextStyle(
+          color: Colors.indigoAccent,
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.indigoAccent),
+        ),
         suffixIcon: IconButton(
           icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
           onPressed: () {
