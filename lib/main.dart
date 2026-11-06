@@ -29,6 +29,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'pages/calendar_screen.dart';
 
 import 'pages/splash_screen.dart';
+import 'pages/nav_test.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,8 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-      home: CalendarScreen(),
+      home: SplashScreen(),
     );
   }
 }
