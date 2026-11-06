@@ -37,6 +37,26 @@ class _NavBarState extends State<NavBar> {
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
+
+            if (currentPageIndex == 0) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                'home_screen',
+                (route) => false,
+              );
+            } else if (currentPageIndex == 1) {
+              Navigator.pushNamedAndRemoveUntil(
+                context, 
+                'calendar_screen',
+                (route) => false,
+              );
+            } else if (currentPageIndex == 2) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                'login_screen',
+                (route) => false,
+              );
+            }
           });
         },
         destinations: const [
