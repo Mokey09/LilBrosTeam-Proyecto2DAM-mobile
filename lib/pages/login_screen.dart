@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/widget/nav_bar.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -32,6 +33,7 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: NavBar(),
     );
   }
 }

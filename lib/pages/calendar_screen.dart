@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '/utils/utils.dart';
 
@@ -165,6 +166,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: NavBar(),
     );
   }
 }

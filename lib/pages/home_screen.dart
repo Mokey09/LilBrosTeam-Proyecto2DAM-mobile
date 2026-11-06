@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/widget/nav_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,6 +10,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Text('Home'),
       ),
+      bottomNavigationBar: NavBar()
     );
   }
 }
