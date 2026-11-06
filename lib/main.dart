@@ -24,6 +24,21 @@ Future<void> _loadData() async {
   // Carga de sesión, configuración, etc.
 }
 
+// Calendario
+import 'package:intl/date_symbol_data_local.dart';
+import 'pages/calendar_screen.dart';
+
+import 'pages/splash_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Pone la fecha del calendario en tipo Espana
+  await initializeDateFormatting('es_ES', null);
+
+  runApp(const MyApp());
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -32,6 +47,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
+      home: CalendarScreen(),
     );
   }
 }
