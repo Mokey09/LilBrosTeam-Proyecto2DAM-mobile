@@ -108,7 +108,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: const CalendarStyle(
+            calendarStyle: CalendarStyle(
+              markersMaxCount: 1,
+              canMarkersOverflow: false,
               outsideDaysVisible: false,
                 // Color de las bolitas
                 markerDecoration: BoxDecoration(
