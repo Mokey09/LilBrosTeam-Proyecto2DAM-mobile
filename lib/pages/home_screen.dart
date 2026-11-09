@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'calendar_screen.dart';
 import 'login_screen.dart';
+import 'user_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -23,7 +24,7 @@ class HomeScreen extends StatelessWidget {
     // TODO: navegar a la pantalla de perfil
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const UserScreen()),
     );
   }
 
