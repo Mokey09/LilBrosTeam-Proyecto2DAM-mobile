@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'home_screen.dart';
-import 'package:synkra_app/widgets/password_widget.dart';
+import 'package:synkra_app/widget/password_widget.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -60,9 +60,6 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
-      // TODO esta barra de navegacion debe ser borrada una vez implementado el
-      // TODO sistema de login
-      bottomNavigationBar: NavBar(currentIndex: 2,),
     );
   }
 }

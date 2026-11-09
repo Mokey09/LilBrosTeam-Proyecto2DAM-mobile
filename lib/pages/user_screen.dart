@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:synkra_app/widget/password_change_box.dart';
 import 'package:synkra_app/widget/password_widget.dart';
 import 'home_screen.dart';
@@ -176,7 +177,7 @@ class UserScreen extends StatelessWidget {
       ),
       // TODO esta barra de navegacion debe ser borrada una vez implementado el
       // TODO sistema de login
-      //bottomNavigationBar: NavBar(currentIndex: 2,),
+      bottomNavigationBar: NavBar(currentIndex: 2,),
     );
   }
 }

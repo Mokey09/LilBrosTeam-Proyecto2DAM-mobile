@@ -64,7 +64,7 @@ class _NavBarState extends State<NavBar> {
             } else if (currentPageIndex == 2) {
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                'login_screen',
+                'user_screen',
                 (route) => false,
               );
             }
