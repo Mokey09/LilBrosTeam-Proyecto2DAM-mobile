@@ -5,6 +5,9 @@ import 'package:synkra_app/pages/calendar_screen.dart';
 import 'package:synkra_app/pages/home_screen.dart';
 import 'pages/login_screen.dart';
 
+// TODO no debe ir directamente a HomeScreen,
+// TODO debe pasar antes por el login de usuario y entonces ya HomeScreen
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

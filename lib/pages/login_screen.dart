@@ -60,6 +60,8 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
+      // TODO esta barra de navegacion debe ser borrada una vez implementado el
+      // TODO sistema de login
       bottomNavigationBar: NavBar(currentIndex: 2,),
     );
   }

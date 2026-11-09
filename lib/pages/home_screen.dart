@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 
+// TODO pantalla inicial, en esta pantalla habran dos botones para
+// TODO solicitar dias y ver un historial de las solicitudes
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 

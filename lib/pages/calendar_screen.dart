@@ -87,6 +87,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendario escolar'),
+        // TODO considerar si poner al lado del titulo los dias restantes que se pueden solicitar
       ),
       body: Column(
         children: [
