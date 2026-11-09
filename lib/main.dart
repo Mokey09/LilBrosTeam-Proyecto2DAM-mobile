@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:synkra_app/pages/calendar_screen.dart';
 import 'package:synkra_app/pages/home_screen.dart';
 import 'pages/login_screen.dart';
+import 'pages/user_screen.dart';
 
 // TODO no debe ir directamente a HomeScreen,
 // TODO debe pasar antes por el login de usuario y entonces ya HomeScreen
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'home_screen': (_) => HomeScreen(),
         'calendar_screen': (_) => CalendarScreen(),
+        'user_screen': (_) => UserScreen(),
         'login_screen': (_) => LoginScreen(),
       },
     );
