@@ -27,6 +27,8 @@ class UserScreen extends StatelessWidget {
             Stack(
               alignment: Alignment.center,
               children: [
+                // TODO hay que cambiar el icono por una imagen del profesor
+                // https://www.youtube.com/watch?v=ux8qGI8hH70
                 Icon(Icons.account_circle, size: 150, color: const Color.fromARGB(221, 26, 26, 26),),
                 Positioned(
                   bottom: 0, right: 0,
@@ -54,7 +56,6 @@ class UserScreen extends StatelessWidget {
                 )
               ],
             ),
-            // TODO esto luego tiene que ser la imagen del profesor
             const Text(
               "Nombre completo del profesor",
               maxLines: 1,
