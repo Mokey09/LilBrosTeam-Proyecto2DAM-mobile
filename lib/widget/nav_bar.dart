@@ -3,15 +3,25 @@ import 'package:flutter/material.dart';
 //https://api.flutter.dev/flutter/material/NavigationBar-class.html
 
 class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+  // Se necesita saber el indice actual, se pasa por el constructor
+  final int currentIndex;
+
+  const NavBar({super.key, required this.currentIndex});
 
   @override
   State<NavBar> createState() => _NavBarState();
 }
 
 class _NavBarState extends State<NavBar> {
-  int currentPageIndex = 0;
+  late int currentPageIndex;
   NavigationDestinationLabelBehavior labelBehavior = .alwaysShow;
+
+  // Estado inicial con el indice actual
+  @override
+  void initState() {
+    super.initState();
+    currentPageIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +45,8 @@ class _NavBarState extends State<NavBar> {
         labelBehavior: labelBehavior,
         selectedIndex: currentPageIndex,
         onDestinationSelected: (int index) {
-          setState(() {
+            // Si es el indice actual, no hacer nada
+            if (index == currentPageIndex) return;
             currentPageIndex = index;
 
             if (currentPageIndex == 0) {
@@ -57,7 +68,6 @@ class _NavBarState extends State<NavBar> {
                 (route) => false,
               );
             }
-          });
         },
         destinations: const [
           NavigationDestination(

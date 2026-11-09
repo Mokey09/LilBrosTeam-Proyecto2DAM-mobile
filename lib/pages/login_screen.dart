@@ -57,7 +57,7 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: NavBar(),
+      bottomNavigationBar: NavBar(currentIndex: 2,),
     );
   }
 }
