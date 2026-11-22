@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 
 // La contrasena cambia de estado (visible/no visible)
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key});
+  // Controller opcional para poder leer lo escrito (p. ej. en el login)
+  final TextEditingController? controller;
+  final ValueChanged<String>? onSubmitted;
+
+  const PasswordField({super.key, this.controller, this.onSubmitted});
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -16,6 +20,8 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.controller,
+      onSubmitted: widget.onSubmitted,
       obscureText: _obscureText,
       cursorColor: Colors.indigoAccent,
       decoration: InputDecoration(
