@@ -1,4 +1,7 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:synkra_app/services/api_client.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '/utils/utils.dart';
@@ -16,6 +19,14 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late final ValueNotifier<List<Event>> _selectedEvents;
 
+  // Eventos (días bloqueados) cargados desde la API
+  LinkedHashMap<DateTime, List<Event>> _events = LinkedHashMap(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
+  bool _loading = true;
+  String? _error;
+
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
 
@@ -30,6 +41,39 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final bloqueos = await ApiClient.instance.bloqueos();
+      if (!mounted) return;
+      setState(() {
+        _events = eventosDesdeBloqueos(bloqueos);
+        _loading = false;
+      });
+      // Refresca la lista del día seleccionado con los datos nuevos
+      if (_selectedDay != null) {
+        _selectedEvents.value = _getEventsForDay(_selectedDay!);
+      }
+    } on UnauthorizedException {
+      // Token caducado: de vuelta al login
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        'login_screen',
+        (route) => false,
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -39,7 +83,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-    return kEvents[day] ?? [];
+    return _events[day] ?? [];
   }
 
   List<Event> _getEventsForRange(DateTime start, DateTime end) {
@@ -87,10 +131,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendario escolar'),
+        actions: [
+          IconButton(
+            tooltip: 'Recargar',
+            icon: const Icon(Icons.refresh),
+            onPressed: _loading ? null : _loadEvents,
+          ),
+        ],
         // TODO considerar si poner al lado del titulo los dias restantes que se pueden solicitar
       ),
       body: Column(
         children: [
+          if (_loading) const LinearProgressIndicator(),
+          if (_error != null)
+            MaterialBanner(
+              content: Text(_error!),
+              actions: [
+                TextButton(
+                  onPressed: _loadEvents,
+                  child: const Text('Reintentar'),
+                ),
+              ],
+            ),
           TableCalendar<Event>(
             // Esto permite que los siguientes textos esten en castellano
             availableCalendarFormats: const {

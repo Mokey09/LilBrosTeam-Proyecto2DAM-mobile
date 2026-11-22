@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/services/auth_service.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'calendar_screen.dart';
 import 'login_screen.dart';
@@ -7,11 +8,11 @@ import 'user_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
-    this.userName = 'Alberto', // TODO: sustituir por el usuario autenticado
+    this.userName, // si es null se usa el profesor autenticado
     this.profileImageUrl, // TODO: foto de perfil del usuario
   });
 
-  final String userName;
+  final String? userName;
   final String? profileImageUrl;
 
   // Colores del diseño. Si ya los tienes en el ThemeData, cámbialos por
@@ -70,7 +71,7 @@ class HomeScreen extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         titleSpacing: 20,
         title: Text(
-          'Hola, $userName',
+          'Hola, ${userName ?? AuthService.instance.profesor?.nombre ?? ''}',
           style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
         actions: [
