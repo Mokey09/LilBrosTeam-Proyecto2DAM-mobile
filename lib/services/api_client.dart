@@ -126,4 +126,58 @@ class ApiClient {
         .map((e) => Bloqueo.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  // ---- Contraseña ----
+
+  /// PUT /auth/contrasena (cualquier rol, solo sobre su propia cuenta).
+  /// La API responde 204 si todo va bien y 400 si la contraseña actual no es
+  /// correcta, la nueva tiene menos de 8 caracteres o es igual a la actual.
+  /// Como la API no envía el texto del error, la longitud y la igualdad se
+  /// validan antes en la app; un 400 aquí significa contraseña actual errónea.
+  Future<void> cambiarContrasena(String actual, String nueva) async {
+    final token = await TokenStorage.read();
+    if (token == null) throw const UnauthorizedException();
+
+    final response = await _send(() => http.put(
+          _uri('/auth/contrasena'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'contrasenaActual': actual,
+            'contrasenaNueva': nueva,
+          }),
+        ));
+
+    if (response.statusCode == 401) {
+      // OJO: si la API lanza un 400 (contraseña actual incorrecta, nueva no
+      // válida...), Spring lo reenvía a /error y, como /error no está permitida
+      // en SecurityConfig, acaba llegando como 401. Para no echar al usuario
+      // por error, se comprueba si el token sigue valiendo con /auth/me.
+      try {
+        await me();
+      } on UnauthorizedException {
+        rethrow; // el token sí ha caducado (me() ya lo ha borrado)
+      }
+      throw const ApiException(
+          'No se pudo cambiar: revisa la contraseña actual '
+          '(la nueva debe tener 8 caracteres o más y ser distinta)',
+          statusCode: 400);
+    }
+    if (response.statusCode == 400) {
+      // La API manda {"message": "..."} (server.error.include-message=always)
+      String mensaje = 'No se pudo cambiar la contraseña';
+      try {
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
+        final m = json is Map ? json['message'] : null;
+        if (m is String && m.isNotEmpty) mensaje = m;
+      } catch (_) {}
+      throw ApiException(mensaje, statusCode: 400);
+    }
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException('Error del servidor (${response.statusCode})',
+          statusCode: response.statusCode);
+    }
+  }
 }
