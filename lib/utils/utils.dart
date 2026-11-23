@@ -45,10 +45,10 @@ List<DateTime> daysInRange(DateTime first, DateTime last) {
 }
 
 // TODO borrar esto luego!!
-final kToday = DateTime.now();
-final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
-final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
-// TODO dejar esto luego!!
 // final kToday = DateTime.now();
-// final kFirstDay = DateTime(2024, 1, 1);
-// final kLastDay = DateTime(2100, 12, 31);
+// final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
+// final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
+// TODO dejar esto luego!!
+final kToday = DateTime.now();
+final kFirstDay = DateTime(2024, 1, 1);
+final kLastDay = DateTime(2100, 12, 31);
