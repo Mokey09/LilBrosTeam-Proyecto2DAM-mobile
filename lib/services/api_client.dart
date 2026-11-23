@@ -151,8 +151,19 @@ class ApiClient {
         ));
 
     if (response.statusCode == 401) {
-      await TokenStorage.clear();
-      throw const UnauthorizedException();
+      // OJO: si la API lanza un 400 (contraseña actual incorrecta, nueva no
+      // válida...), Spring lo reenvía a /error y, como /error no está permitida
+      // en SecurityConfig, acaba llegando como 401. Para no echar al usuario
+      // por error, se comprueba si el token sigue valiendo con /auth/me.
+      try {
+        await me();
+      } on UnauthorizedException {
+        rethrow; // el token sí ha caducado (me() ya lo ha borrado)
+      }
+      throw const ApiException(
+          'No se pudo cambiar: revisa la contraseña actual '
+          '(la nueva debe tener 8 caracteres o más y ser distinta)',
+          statusCode: 400);
     }
     if (response.statusCode == 400) {
       throw const ApiException('La contraseña actual no es correcta',
