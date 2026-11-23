@@ -71,6 +71,13 @@ class _PasswordDialogBox extends State<PasswordDialogBox> {
         _error = e.message;
         _loading = false;
       });
+    } catch (e) {
+      // Cualquier otro fallo (respuesta rara, error de red no previsto...)
+      if (!mounted) return;
+      setState(() {
+        _error = 'Error inesperado: $e';
+        _loading = false;
+      });
     }
   }
 
