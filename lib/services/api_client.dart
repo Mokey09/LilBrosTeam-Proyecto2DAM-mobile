@@ -166,8 +166,14 @@ class ApiClient {
           statusCode: 400);
     }
     if (response.statusCode == 400) {
-      throw const ApiException('La contraseña actual no es correcta',
-          statusCode: 400);
+      // La API manda {"message": "..."} (server.error.include-message=always)
+      String mensaje = 'No se pudo cambiar la contraseña';
+      try {
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
+        final m = json is Map ? json['message'] : null;
+        if (m is String && m.isNotEmpty) mensaje = m;
+      } catch (_) {}
+      throw ApiException(mensaje, statusCode: 400);
     }
     if (response.statusCode != 204 && response.statusCode != 200) {
       throw ApiException('Error del servidor (${response.statusCode})',
