@@ -3,6 +3,7 @@ import 'package:synkra_app/services/auth_service.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'calendar_screen.dart';
 import 'login_screen.dart';
+import 'school_info_screen.dart';
 import 'user_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -45,10 +46,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _openSchoolInfo(BuildContext context) {
-    // TODO: navegar a los datos del centro
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const CalendarScreen()),
+      MaterialPageRoute(builder: (_) => const SchoolInfoScreen()),
     );
   }
 
