@@ -7,8 +7,6 @@ import 'package:synkra_app/pages/home_screen.dart';
 import 'pages/login_screen.dart';
 import 'pages/user_screen.dart';
 
-// TODO no debe ir directamente a HomeScreen,
-// TODO debe pasar antes por el login de usuario y entonces ya HomeScreen
 
 // Valor por defecto del tema (el del sistema) y del notifier
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
