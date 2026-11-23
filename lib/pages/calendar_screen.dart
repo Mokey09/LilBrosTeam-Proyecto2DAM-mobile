@@ -84,6 +84,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Determina si es un tema oscuro, sirve para cambiar el color del borde de las cajitas, dias bloqueados, etc
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendario escolar'),
@@ -110,15 +113,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
             rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
+            // Permite cambiar el color de la cabecera, en este caso es para el boton de '2 semanas', 'semana', 'mes', etc
+            headerStyle: HeaderStyle(
+              formatButtonVisible: true,
+              formatButtonDecoration: BoxDecoration(
+                border: Border.all(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+                borderRadius: BorderRadius.circular(12.0),
+              )
+            ),
             calendarStyle: CalendarStyle(
               markersMaxCount: 1,
               canMarkersOverflow: false,
               outsideDaysVisible: false,
-                // Color de las bolitas
-                markerDecoration: BoxDecoration(
-                color: Colors.amber,
-                shape: BoxShape.circle,
+              // Color de las bolitas
+              markerDecoration: BoxDecoration(
+              color: Colors.amber,
+              shape: BoxShape.circle,
               ),
+              disabledTextStyle: TextStyle(
+                color: isDarkMode ? Colors.white38 : Colors.black38,
+              )
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
@@ -138,7 +154,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               return day.weekday != DateTime.saturday && day.weekday != DateTime.sunday;
             },
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 24.0),
           Expanded(
             child: ValueListenableBuilder<List<Event>>(
               valueListenable: _selectedEvents, 
@@ -152,7 +168,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         vertical: 4.0,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(),
+                        border: Border.all(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(

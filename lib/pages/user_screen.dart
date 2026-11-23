@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synkra_app/main.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:synkra_app/widget/password_change_box.dart';
 import 'package:synkra_app/widget/password_widget.dart';
@@ -10,6 +11,12 @@ class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    // Determina si es un tema oscuro, sirve para cambiar el color del borde de las cajitas, dias bloqueados, etc
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // TODO esto habra que pedirselo a la API
+    final String? userFotoUrl = 'assets/profesora_ejemplo.jpg';
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +37,21 @@ class UserScreen extends StatelessWidget {
               children: [
                 // TODO hay que cambiar el icono por una imagen del profesor
                 // https://www.youtube.com/watch?v=ux8qGI8hH70
-                Icon(Icons.account_circle, size: 150, color: const Color.fromARGB(221, 26, 26, 26),),
+                //Icon(Icons.account_circle, size: 150, color: const Color.fromARGB(221, 26, 26, 26),),
+                ClipOval(
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: FadeInImage(
+                      placeholder: const AssetImage('assets/placeholder_profesor.png'),
+                      // TODO luego sera un NetworkImage, no un AssetImage
+                      image: (userFotoUrl != null && userFotoUrl.isNotEmpty)
+                              ? AssetImage(userFotoUrl) as ImageProvider
+                              : const AssetImage('assets/placeholder_profesor.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
                 Positioned(
                   bottom: 0, right: 0,
                   child: GestureDetector(
@@ -113,6 +134,45 @@ class UserScreen extends StatelessWidget {
                           return const PasswordDialogBox(); // O el nombre correcto de tu clase
                         },
                       );
+                    },
+                    child: const Text('Cambiar', style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    )),
+                  ),
+                ),
+              ],
+            ),
+                        const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Tema actual",
+                        style: textTheme.labelMedium,
+                      ),
+                      Text(
+                        isDarkMode ? "Oscuro" : "Claro",
+                        style: textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  //width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigoAccent,
+                    ),
+                    onPressed: () {
+                      // Notifica a main que el tema ha cambiado para que aplique el cambio globalmente
+                      themeNotifier.value = themeNotifier.value == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+
+                      // TODO realmente en un futuro podria quedar mejor tener un tema preferido
                     },
                     child: const Text('Cambiar', style: TextStyle(
                       color: Colors.white,
