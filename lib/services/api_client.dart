@@ -126,4 +126,41 @@ class ApiClient {
         .map((e) => Bloqueo.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  // ---- Contraseña ----
+
+  /// PUT /auth/contrasena (cualquier rol, solo sobre su propia cuenta).
+  /// La API responde 204 si todo va bien y 400 si la contraseña actual no es
+  /// correcta, la nueva tiene menos de 8 caracteres o es igual a la actual.
+  /// Como la API no envía el texto del error, la longitud y la igualdad se
+  /// validan antes en la app; un 400 aquí significa contraseña actual errónea.
+  Future<void> cambiarContrasena(String actual, String nueva) async {
+    final token = await TokenStorage.read();
+    if (token == null) throw const UnauthorizedException();
+
+    final response = await _send(() => http.put(
+          _uri('/auth/contrasena'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'contrasenaActual': actual,
+            'contrasenaNueva': nueva,
+          }),
+        ));
+
+    if (response.statusCode == 401) {
+      await TokenStorage.clear();
+      throw const UnauthorizedException();
+    }
+    if (response.statusCode == 400) {
+      throw const ApiException('La contraseña actual no es correcta',
+          statusCode: 400);
+    }
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw ApiException('Error del servidor (${response.statusCode})',
+          statusCode: response.statusCode);
+    }
+  }
 }
