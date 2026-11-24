@@ -58,7 +58,7 @@ class _NavBarState extends State<NavBar> {
             } else if (currentPageIndex == 1) {
               Navigator.pushNamedAndRemoveUntil(
                 context, 
-                'calendar_screen',
+                'solicitud_calendar_screen',
                 (route) => false,
               );
             } else if (currentPageIndex == 2) {
