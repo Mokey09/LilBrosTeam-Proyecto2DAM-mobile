@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:synkra_app/pages/auth_gate.dart';
 import 'package:synkra_app/pages/calendar_screen.dart';
 import 'package:synkra_app/pages/home_screen.dart';
+import 'package:synkra_app/pages/solicitud_calendar_screen.dart';
 import 'pages/login_screen.dart';
 import 'pages/user_screen.dart';
 
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
               routes: {
                 'home_screen': (_) => HomeScreen(),
                 'calendar_screen': (_) => CalendarScreen(),
+                'solicitud_calendar_screen': (_) => SolicitudCalendarScreen(),
                 'user_screen': (_) => UserScreen(),
                 'login_screen': (_) => LoginScreen(),
               },

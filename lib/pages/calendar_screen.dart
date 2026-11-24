@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:synkra_app/pages/solicitud_screen.dart';
 import 'package:synkra_app/services/api_client.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -141,7 +142,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             onPressed: _loading ? null : _loadEvents,
           ),
         ],
-        // TODO considerar si poner al lado del titulo los dias restantes que se pueden solicitar
       ),
       body: Column(
         children: [
