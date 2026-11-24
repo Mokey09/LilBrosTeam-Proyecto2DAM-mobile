@@ -25,6 +25,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     equals: isSameDay,
     hashCode: getHashCode,
   );
+  // Tipo de bloqueo de cada día (ej. "FESTIVO_NACIONAL"), para elegir el color
+  LinkedHashMap<DateTime, String> _tipoPorDia = LinkedHashMap(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
   bool _loading = true;
   String? _error;
 
@@ -53,8 +58,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
     try {
       final bloqueos = await ApiClient.instance.bloqueos();
       if (!mounted) return;
+      // Si hay varios bloqueos el mismo día, manda el primero
+      final tipos = LinkedHashMap<DateTime, String>(
+        equals: isSameDay,
+        hashCode: getHashCode,
+      );
+      for (final b in bloqueos) {
+        tipos.putIfAbsent(b.fecha, () => b.tipo);
+      }
       setState(() {
         _events = eventosDesdeBloqueos(bloqueos);
+        _tipoPorDia = tipos;
         _loading = false;
       });
       // Refresca la lista del día seleccionado con los datos nuevos
@@ -127,20 +141,100 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  // TODO no tiene que ser de tipo String tiene que ser de Bloqueo
-  Color _colorBasedType(String? bloqueo) {
-    // TODO bloqueo.tipo creo
-    switch (bloqueo) {
-      case "Festivo nacional": return Colors.amber;
-      case "Festivo autonomico": return Colors.amber;
-      case "Festivo local": return Colors.amber;
-      case "Vacaciones": return Colors.green;
-      case "Dia no lectivo": return Colors.red;
-      case "Evaluacion": return Colors.deepPurple;
-      case "Periodo examenes": return Colors.deepPurple;
-      case "Otro": return Colors.pinkAccent;
-      default: return Colors.grey;
+  // Recibe Bloqueo.tipo tal cual llega de la API (ej. "FESTIVO_NACIONAL")
+  Color _colorBasedType(String? tipo) {
+    switch (tipo?.toUpperCase()) {
+      case "FESTIVO_NACIONAL":
+      case "FESTIVO_AUTONOMICO":
+      case "FESTIVO_LOCAL":
+        return Colors.amber;
+      case "VACACIONES":
+        return Colors.green;
+      case "DIA_NO_LECTIVO":
+        return Colors.red;
+      case "EVALUACION":
+      case "PERIODO_EXAMENES":
+        return Colors.deepPurple;
+      case "OTRO":
+        return Colors.pinkAccent;
+      default:
+        return Colors.grey;
     }
+  }
+
+  Color _colorForDay(DateTime day) => _colorBasedType(_tipoPorDia[day]);
+
+  // ---------------------------------------------------------------------------
+  // Barras continuas para días bloqueados consecutivos
+  // ---------------------------------------------------------------------------
+
+  bool _hasEvents(DateTime day) => _getEventsForDay(day).isNotEmpty;
+
+  // Días naturales contiguos (los fines de semana también cuentan)
+  DateTime _prevDay(DateTime day) => day.subtract(const Duration(days: 1));
+  DateTime _nextDay(DateTime day) => day.add(const Duration(days: 1));
+
+  // Devuelve null si el día no está bloqueado (así table_calendar usa su
+  // aspecto por defecto). Si está bloqueado, dibuja la "píldora" y la une con
+  // los vecinos bloqueados.
+  // Con outsideDaysVisible: true los días de otros meses siempre se ven,
+  // así que el vecino cuenta aunque sea del mes anterior/siguiente.
+  // Solo se une con vecinos bloqueados del mismo color (mismo tipo o tipos
+  // que comparten color, como los tres festivos).
+  bool _neighborBlocked(DateTime day, DateTime neighbor) {
+    return _hasEvents(neighbor) && _colorForDay(neighbor) == _colorForDay(day);
+  }
+
+  Widget? _buildBlockedDay(
+    DateTime day, {
+    bool selected = false,
+    bool outside = false,
+  }) {
+    if (!_hasEvents(day)) return null;
+
+    final prev = _neighborBlocked(day, _prevDay(day));
+    final next = _neighborBlocked(day, _nextDay(day));
+
+    // Lunes (inicio de fila) y domingo (final de fila): la barra se corta ahí
+    // porque el vecino queda en otra fila.
+    final joinLeft = prev && day.weekday != DateTime.monday;
+    final joinRight = next && day.weekday != DateTime.sunday;
+
+    const r = Radius.circular(100);
+
+    Color color = _colorForDay(day);
+    if (selected) {
+      // El día seleccionado se ve más oscuro para distinguirlo dentro de la barra
+      color = HSLColor.fromColor(color).withLightness(0.35).toColor();
+    }
+    if (outside) {
+      // Días del mes anterior/siguiente: mismo color pero más suave
+      color = color.withAlpha(110);
+    }
+
+    return Container(
+      margin: EdgeInsets.only(
+        top: 6.0,
+        bottom: 6.0,
+        left: joinLeft ? 0 : 6.0,
+        right: joinRight ? 0 : 6.0,
+      ),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.horizontal(
+          left: joinLeft ? Radius.zero : r,
+          right: joinRight ? Radius.zero : r,
+        ),
+      ),
+      child: Text(
+        '${day.day}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   @override
@@ -199,37 +293,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
                 borderRadius: BorderRadius.circular(12.0),
-              )
+              ),
             ),
-            calendarStyle: CalendarStyle(
+            calendarStyle: const CalendarStyle(
               markersMaxCount: 0,
               canMarkersOverflow: false,
-              outsideDaysVisible: false,
+              outsideDaysVisible: true,
             ),
             calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                final hasEvents = _getEventsForDay(day).isNotEmpty;
-
-                if (hasEvents) {
-                  return Container(
-                    margin: const EdgeInsets.all(6.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      // TODO por aqui se pasara el bloqueo, ahora mismo es un String de prueba a falta de la API
-                      color: _colorBasedType("Otro"),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }
-                return null; 
-              },
+              // Día normal
+              defaultBuilder: (context, day, focusedDay) =>
+                  _buildBlockedDay(day),
+              // Día de hoy (si no está bloqueado devuelve null y se ve el de siempre)
+              todayBuilder: (context, day, focusedDay) =>
+                  _buildBlockedDay(day),
+              // Día seleccionado (si no está bloqueado se ve el de siempre)
+              selectedBuilder: (context, day, focusedDay) =>
+                  _buildBlockedDay(day, selected: true),
+              // Días de otro mes (se ven en "2 semanas" y "Semana"): son los
+              // que faltaban para que la barra continúe al cambiar de mes
+              outsideBuilder: (context, day, focusedDay) =>
+                  _buildBlockedDay(day, outside: true),
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
@@ -243,16 +327,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
-            // TODO aqui se podria extraer un metodo y anadir el rango de dias cuando lo tengamos,
-            // de momento son solos los findes para probar
-            enabledDayPredicate: (day) {
-              return day.weekday != DateTime.saturday && day.weekday != DateTime.sunday;
-            },
           ),
           const SizedBox(height: 24.0),
           Expanded(
             child: ValueListenableBuilder<List<Event>>(
-              valueListenable: _selectedEvents, 
+              valueListenable: _selectedEvents,
               builder: (context, value, _) {
                 return ListView.builder(
                   itemCount: value.length,
@@ -280,7 +359,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: NavBar(currentIndex: 1,),
+      bottomNavigationBar: NavBar(currentIndex: 1),
     );
   }
 }
