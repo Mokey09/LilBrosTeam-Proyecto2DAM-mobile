@@ -81,6 +81,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
+  // TODO no tiene que ser de tipo String tiene que ser de Bloqueo
+  Color _colorBasedType(String? bloqueo) {
+    // TODO bloqueo.tipo creo
+    switch (bloqueo) {
+      case "Festivo nacional": return Colors.amber;
+      case "Festivo autonomico": return Colors.amber;
+      case "Festivo local": return Colors.amber;
+      case "Vacaciones": return Colors.green;
+      case "Dia no lectivo": return Colors.red;
+      case "Evaluacion": return Colors.deepPurple;
+      case "Periodo examenes": return Colors.deepPurple;
+      case "Otro": return Colors.pinkAccent;
+      default: return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,14 +125,34 @@ class _CalendarScreenState extends State<CalendarScreen> {
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: CalendarStyle(
-              markersMaxCount: 1,
+              markersMaxCount: 0,
               canMarkersOverflow: false,
               outsideDaysVisible: false,
-              // Color de las bolitas
-              markerDecoration: BoxDecoration(
-              color: Colors.amber,
-              shape: BoxShape.circle,
-              ),
+            ),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                final hasEvents = _getEventsForDay(day).isNotEmpty;
+
+                if (hasEvents) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      // TODO por aqui se pasara el bloqueo, ahora mismo es un String de prueba a falta de la API
+                      color: _colorBasedType("Otro"),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                return null; 
+              },
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
