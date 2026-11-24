@@ -112,11 +112,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
               markersMaxCount: 1,
               canMarkersOverflow: false,
               outsideDaysVisible: false,
-                // Color de las bolitas
-                markerDecoration: BoxDecoration(
-                color: Colors.amber,
-                shape: BoxShape.circle,
+              // Color de las bolitas
+              markerDecoration: BoxDecoration(
+              color: Colors.amber,
+              shape: BoxShape.circle,
               ),
+            ),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                final hasEvents = _getEventsForDay(day).isNotEmpty;
+
+                if (hasEvents) {
+                  return Container(
+                    margin: const EdgeInsets.all(6.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.indigoAccent, // Color de fondo para días con eventos
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+                return null; // Si no tiene eventos, se pinta de forma completamente normal por la librería
+              },
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
