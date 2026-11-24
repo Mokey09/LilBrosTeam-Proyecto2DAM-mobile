@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/bloqueo.dart';
 import '../models/profesor.dart';
+import '../models/sesion_horario.dart';
 import 'api_config.dart';
 import 'token_storage.dart';
 
@@ -124,6 +125,19 @@ class ApiClient {
     final json = await _getAuth('/bloqueados') as List<dynamic>;
     return json
         .map((e) => Bloqueo.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+    // ---- Horario ----
+
+  /// GET /sesiones/profesor/{dni}. Sesiones del profesor (cualquier rol puede
+  /// leerlas, según SecurityConfig).
+  Future<List<SesionHorario>> sesionesProfesor(String dni) async {
+    final json =
+        await _getAuth('/sesiones/profesor/${Uri.encodeComponent(dni)}')
+            as List<dynamic>;
+    return json
+        .map((e) => SesionHorario.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
