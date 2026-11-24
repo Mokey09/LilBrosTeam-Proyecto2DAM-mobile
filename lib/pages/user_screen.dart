@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:synkra_app/main.dart'; // themeNotifier
 import 'package:synkra_app/models/profesor.dart';
+import 'package:synkra_app/models/sesion_horario.dart';
 import 'package:synkra_app/services/api_client.dart';
 import 'package:synkra_app/services/auth_service.dart';
+import 'package:synkra_app/widget/horario_semanal.dart';
 import 'package:synkra_app/widget/nav_bar.dart';
 import 'package:synkra_app/widget/password_change_box.dart';
 
@@ -18,6 +20,7 @@ class _UserScreenState extends State<UserScreen> {
   Profesor? _profesor = AuthService.instance.profesor;
   bool _loading = true;
   String? _error;
+  List<SesionHorario> _sesiones = [];
 
   @override
   void initState() {
@@ -33,9 +36,24 @@ class _UserScreenState extends State<UserScreen> {
     try {
       final profesor = await ApiClient.instance.me();
       AuthService.instance.profesor = profesor;
+
+      // El horario es secundario: si falla, el perfil se muestra igualmente
+      var sesiones = _sesiones;
+      final dni = profesor.dni;
+      if (dni != null && dni.isNotEmpty) {
+        try {
+          sesiones = await ApiClient.instance.sesionesProfesor(dni);
+        } on UnauthorizedException {
+          rethrow; // lo recoge el catch de abajo y manda al login
+        } on ApiException catch (e) {
+          debugPrint('Horario: ${e.message} (${e.statusCode})');
+        }
+      }
+
       if (!mounted) return;
       setState(() {
         _profesor = profesor;
+        _sesiones = sesiones;
         _loading = false;
       });
     } on UnauthorizedException {
@@ -280,8 +298,8 @@ class _UserScreenState extends State<UserScreen> {
                           children: [
                             Text("Horario semanal",
                                 style: textTheme.labelMedium),
-                            // TODO aqui hay que renderizar la tabla del horario semanal del profesor
-                            // (GET /sesiones/profesor/{dni} exige rol GESTOR o DIRECTOR en la API)
+                            const SizedBox(height: 4),
+                            HorarioSemanal(sesiones: _sesiones),
                           ],
                         ),
                       ],
