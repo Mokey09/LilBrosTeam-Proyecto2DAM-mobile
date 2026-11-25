@@ -237,6 +237,67 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Leyenda de colores
+  // ---------------------------------------------------------------------------
+
+  // Un tipo representativo por color, para no repetir los tres festivos y
+  // reutilizar _colorBasedType (así la leyenda siempre coincide con el calendario)
+  static const List<({String tipo, String etiqueta})> _leyenda = [
+    (tipo: 'FESTIVO_NACIONAL', etiqueta: 'Festivo'),
+    (tipo: 'VACACIONES', etiqueta: 'Vacaciones'),
+    (tipo: 'DIA_NO_LECTIVO', etiqueta: 'Día no lectivo'),
+    (tipo: 'EVALUACION', etiqueta: 'Evaluación / exámenes'),
+    (tipo: 'OTRO', etiqueta: 'Otro'),
+  ];
+
+  Widget _buildLegend(bool isDarkMode) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: isDarkMode ? Colors.white : Colors.black),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Leyenda',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8.0),
+          Wrap(
+            spacing: 16.0,
+            runSpacing: 8.0,
+            children: [
+              for (final item in _leyenda)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 22,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: _colorBasedType(item.tipo),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    const SizedBox(width: 6.0),
+                    Text(item.etiqueta),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Determina si es un tema oscuro, sirve para cambiar el color del borde de las cajitas, dias bloqueados, etc
@@ -357,6 +418,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               },
             ),
           ),
+          // Leyenda de colores, aprovechando el espacio libre de abajo
+          _buildLegend(isDarkMode),
         ],
       ),
       bottomNavigationBar: NavBar(currentIndex: 1),
